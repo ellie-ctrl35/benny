@@ -3,9 +3,12 @@ import { StyleSheet, Text, View, FlatList, TouchableOpacity,SafeAreaView } from 
 
 const ReminderScreen = () => {
   const reminders = [
-    { key: '1', title: 'Do Home Work', time: '8 am - 9:30 am' },
-    { key: '2', title: 'Make Cookies', time: '9:45 am - 11:00 am' },
+    { key: '1', title: 'o Home Work', time: '8 am - 9:30 am' },
+    { key: '2', title: 'Mke Cookies', time: '9:45 am - 11:00 am' },
     { key: '3', title: 'Math Class', time: '1:00 pm - 3:00 pm' },
+    { key: '4', title: 'Do Home Wok', time: '8 am - 9:30 am' },
+    { key: '5', title: 'Make Cokies', time: '9:45 am - 11:00 am' },
+    { key: '6', title: 'Math lass', time: '1:00 pm - 3:00 pm' },
     // ... more reminders
   ];
 
@@ -21,7 +24,13 @@ const ReminderScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Reminders</Text>
+      <View style={styles.TopContainer}>
+       <Text style={styles.title}>Reminders</Text>
+       <TouchableOpacity>
+
+       </TouchableOpacity>
+      </View>
+      
       <FlatList
         data={reminders}
         renderItem={renderItem}
@@ -34,14 +43,22 @@ const ReminderScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    paddingTop: 50,
+    backgroundColor: '#191919',
+  },
+  TopContainer:{
+   width:"90%",
+   height:"10%",
+   marginTop:"2%",
+   alignSelf:"center",
+   alignItems:"space-evenly",
+   justifyContent:"center"
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginLeft: 20,
     marginBottom: 10,
+    color:"#fff"
   },
   item: {
     backgroundColor: '#D1FAE5',
@@ -50,8 +67,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 10,
     marginHorizontal: 20,
+    marginTop:"1%",
+    height:"65%"
   },
   itemLeft: {
     flexDirection: 'row',
