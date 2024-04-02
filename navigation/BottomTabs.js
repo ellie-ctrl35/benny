@@ -1,11 +1,9 @@
-// BottomTabs.js
 import React from 'react';
-import { View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/App/HomeScreen';
 import ChatScreen from '../screens/App/ChatScreen';
 import ReminderScreen from '../screens/App/ReminderScreen';
-import { HomeIcon, ChatBubbleBottomCenterIcon, BellAlertIcon } from 'react-native-heroicons/solid';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; // Import MaterialCommunityIcons
 
 const Tab = createBottomTabNavigator();
 
@@ -20,18 +18,17 @@ const BottomTabs = () => {
       borderTopColor: 'transparent',
     },
     tabBarIcon: ({ focused, color, size }) => {
-      let icon;
-      let iconColor = focused ? '#5ad7ff' : '#4B5563';
-
+      let iconName;
       if (route.name === 'Home') {
-        icon = <HomeIcon color={iconColor} size={size} />;
+        iconName = 'home';
       } else if (route.name === 'Chat') {
-        icon = <ChatBubbleBottomCenterIcon color={iconColor} size={size} />;
+        iconName = 'chat';
       } else if (route.name === 'Reminder') {
-        icon = <BellAlertIcon color={iconColor} size={size} />;
+        iconName = 'bell';
       }
-
-      return <View style={{ justifyContent: 'center', alignItems: 'center' }}>{icon}</View>;
+      return (
+        <MaterialCommunityIcons name={iconName} size={size} color={focused ? '#5ad7ff' : '#4B5563'} />
+      );
     },
     tabBarActiveTintColor: '#FFFFFF',
     tabBarInactiveTintColor: '#4B5563',
@@ -39,9 +36,9 @@ const BottomTabs = () => {
 
   return (
     <Tab.Navigator screenOptions={screenOptions}>
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Home" component={HomeScreen}  />
       <Tab.Screen name="Chat" component={ChatScreen} />
-      <Tab.Screen name="Reminder" component={ReminderScreen} />
+      <Tab.Screen name="Reminder" component={ReminderScreen} options={{ tabBarBadge: 3 }}/>
     </Tab.Navigator>
   );
 };
