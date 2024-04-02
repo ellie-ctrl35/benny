@@ -11,7 +11,7 @@ const AppStack = () => {
   return (
     <Stack.Navigator initialRouteName="BottomTabs">
       <Stack.Screen name="BottomTabs" component={BottomTabs} options={{ headerShown: false }} />
-      <Stack.Screen name="AddReminder" component={AddReminder} />
+      <Stack.Screen name="AddReminder" component={AddReminder} options={{ headerShown: false }}/>
       <Stack.Screen name="UserProfile" component={UserProfile} />
     </Stack.Navigator>
   );

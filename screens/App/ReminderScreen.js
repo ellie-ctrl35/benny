@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity,SafeAreaView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const ReminderScreen = () => {
   const reminders = [
@@ -11,6 +12,12 @@ const ReminderScreen = () => {
     { key: '6', title: 'Math lass', time: '1:00 pm - 3:00 pm' },
     // ... more reminders
   ];
+
+  const navigation = useNavigation();
+
+  const navToAdd = () =>{
+    navigation.navigate('AddReminder')
+  }
 
   const renderItem = ({ item, index }) => (
     <TouchableOpacity style={[styles.item, { backgroundColor: index % 2 === 0 ? '#D1FAE5' : '#BAE6FD' }]}>
@@ -26,8 +33,8 @@ const ReminderScreen = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.TopContainer}>
        <Text style={styles.title}>Reminders</Text>
-       <TouchableOpacity>
-
+       <TouchableOpacity onPress={navToAdd} style={styles.AddBtn}>
+         
        </TouchableOpacity>
       </View>
       
@@ -50,8 +57,10 @@ const styles = StyleSheet.create({
    height:"10%",
    marginTop:"2%",
    alignSelf:"center",
-   alignItems:"space-evenly",
-   justifyContent:"center"
+   alignItems:"center",
+   justifyContent:"space-between",
+   display:"flex",
+   flexDirection:"row",
   },
   title: {
     fontSize: 24,
@@ -94,6 +103,12 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 5,
   },
+  AddBtn:{
+    backgroundColor:"dodgerblue",
+    height:"85%",
+    width:"15%",
+    borderRadius:"50%"
+  }
 });
 
 export default ReminderScreen;

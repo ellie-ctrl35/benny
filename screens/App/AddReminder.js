@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform,SafeAreaView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons'; // Ensure you have expo/vector-icons installed
 
@@ -20,7 +20,7 @@ const AddReminder = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.header}>Add New Reminder</Text>
       
       {/* Date Picker */}
@@ -67,7 +67,7 @@ const AddReminder = () => {
       <TouchableOpacity style={styles.addButton}>
         <Text style={styles.addButtonText}>Add Hashtags</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000', // Assuming dark mode from screenshot
-    padding: 16,
+    padding: 20,
   },
   header: {
     fontSize: 20,
