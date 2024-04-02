@@ -6,7 +6,6 @@ import AppStack from './navigation/AppStack';
 import { enableScreens } from 'react-native-screens';
 enableScreens();
 
-
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
 
