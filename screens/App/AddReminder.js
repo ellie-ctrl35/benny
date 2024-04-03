@@ -2,6 +2,50 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Alert,Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons'; // Ensure you have expo/vector-icons installed
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import PushNotification from 'react-native-push-notification';
+import * as Notifications from 'expo-notifications';
+
+async function schedulePushNotification(reminder) {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "Reminder!",
+      body: reminder.message,
+    },
+    trigger: reminder.time,
+  });
+}
+
+async function registerForPushNotificationsAsync() {
+  let token;
+  if (Device.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+  } else {
+    alert('Must use physical device for Push Notifications');
+  }
+
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  return token;
+}
+
 
 const AddReminder = () => {
   const [date, setDate] = useState(new Date());
@@ -43,6 +87,39 @@ const AddReminder = () => {
       { cancelable: true },
     );
   };
+
+  const scheduleNotification = (reminder) => {
+    PushNotification.localNotificationSchedule({
+      message: reminder.message, // (required)
+      date: new Date(reminder.time), // in 60 secs
+      allowWhileIdle: true, // (optional) set notification to work while on doze, default: false
+    });
+  };
+
+  const handleSaveReminder = async () => {
+    try {
+      const reminder = {
+        id: Date.now().toString(),
+        title,
+        time: date.toISOString(), // ISO string of the scheduled time
+        message: `Reminder for ${title}`,
+      };
+
+      // Save reminder to AsyncStorage
+      const storedReminders = await AsyncStorage.getItem('reminders');
+      const reminders = storedReminders ? JSON.parse(storedReminders) : [];
+      reminders.push(reminder);
+      await AsyncStorage.setItem('reminders', JSON.stringify(reminders));
+
+      // Schedule notification
+      await schedulePushNotification(reminder);
+
+      // Reset state or navigate away
+    } catch (error) {
+      // Handle errors
+    }
+  };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -90,7 +167,7 @@ const AddReminder = () => {
         <Ionicons name="chevron-down" size={24} color="black" />
       </TouchableOpacity>
       
-      <TouchableOpacity style={styles.addButton}>
+      <TouchableOpacity style={styles.addButton} onPress={handleSaveReminder}>
         <Text style={styles.addButtonText}>Add Hashtags</Text>
       </TouchableOpacity>
     </SafeAreaView>
