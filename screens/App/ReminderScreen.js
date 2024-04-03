@@ -78,7 +78,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginHorizontal: 20,
     marginTop:"1%",
-    height:"65%"
+    height:100,
+    marginBottom:"2%"
   },
   itemLeft: {
     flexDirection: 'row',
