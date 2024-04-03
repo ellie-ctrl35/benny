@@ -74,7 +74,7 @@ const AddReminder = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000', // Assuming dark mode from screenshot
+    backgroundColor: '#191919', // Assuming dark mode from screenshot
     padding: 20,
   },
   header: {
