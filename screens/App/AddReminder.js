@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import {
   View,
   Text,
@@ -72,6 +72,36 @@ const AddReminder = () => {
   const [showDate, setShowDate] = useState(false);
   const [showTime, setShowTime] = useState(false);
   const [description, setDescription] = useState('');
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      checkReminders();
+    }, 1000); // Check every second
+    return () => clearInterval(interval); // Clean up interval on component unmount
+  }, []);
+
+  const checkReminders = async () => {
+    const storedReminders = await AsyncStorage.getItem("reminders");
+    if (storedReminders) {
+      const reminders = JSON.parse(storedReminders);
+      const now = new Date();
+      reminders.forEach((reminder) => {
+        const reminderTime = new Date(reminder.time);
+        if (
+          now.getFullYear() === reminderTime.getFullYear() &&
+          now.getMonth() === reminderTime.getMonth() &&
+          now.getDate() === reminderTime.getDate() &&
+          now.getHours() === reminderTime.getHours() &&
+          now.getMinutes() === reminderTime.getMinutes() &&
+          now.getSeconds() === 0
+        ) {
+          // Trigger notification for the reminder
+          schedulePushNotification(reminder);
+        }
+      });
+    }
+  };
+
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
