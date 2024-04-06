@@ -6,9 +6,14 @@ import {
   FlatList,
   TouchableOpacity,
   SafeAreaView,
+  Animated,
+  Dimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Swipeable } from "react-native-gesture-handler";
+
+const { width } = Dimensions.get("window");
 
 const ReminderScreen = () => {
   const [reminders, setReminders] = useState([]);
@@ -33,31 +38,54 @@ const ReminderScreen = () => {
     navigation.navigate("AddReminder");
   };
 
-  const renderItem = ({ item, index }) => {
+  const renderItem = ({ item }) => {
     const reminderTime = new Date(item.time);
-    // Format the time into a readable string
     const formattedTime = reminderTime.toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
     });
+
     return (
-      <TouchableOpacity
-        style={[
-          styles.item,
-          { backgroundColor: index % 2 === 0 ? "#D1FAE5" : "#BAE6FD" },
-        ]}
-      >
-        <View style={styles.itemLeft}>
-          <View style={styles.square}></View>
-          <View>
-            <Text style={styles.itemTitle}>{item.description}</Text>
-            <Text style={styles.itemText}>
-            {formattedTime} - {item.frequency}
-            </Text>
+      <Swipeable renderRightActions={renderRightActions}>
+        <TouchableOpacity
+          style={styles.item}
+          onPress={() => console.log("Pressed")}
+        >
+          <View style={styles.itemLeft}>
+            <View style={styles.square}></View>
+            <View>
+              <Text style={styles.itemTitle}>{item.description}</Text>
+              <Text style={styles.itemText}>
+                {formattedTime} - {item.frequency}
+              </Text>
+            </View>
           </View>
-        </View>
-        <View style={styles.circular}></View>
-      </TouchableOpacity>
+          <View style={styles.circular}></View>
+        </TouchableOpacity>
+      </Swipeable>
+    );
+  };
+
+  const renderRightActions = (progress, dragX) => {
+    const trans = dragX.interpolate({
+      inputRange: [-width, 0],
+      outputRange: [-60, 0],
+      extrapolate: "clamp",
+    });
+
+    return (
+      <View style={styles.rightActions}>
+        <Animated.View style={[styles.actionButton, { transform: [{ translateX: trans }] }]}>
+          <TouchableOpacity onPress={() => console.log("Delete")}>
+            <Text style={styles.actionText}>Delete</Text>
+          </TouchableOpacity>
+        </Animated.View>
+        <Animated.View style={[styles.actionButton, { transform: [{ translateX: trans }] }]}>
+          <TouchableOpacity onPress={() => console.log("Edit")}>
+            <Text style={styles.actionText}>Edit</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
     );
   };
 
@@ -65,10 +93,7 @@ const ReminderScreen = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.topContainer}>
         <Text style={styles.title}>Reminders</Text>
-        <TouchableOpacity
-          onPress={navToAdd}
-          style={styles.addBtn}
-        ></TouchableOpacity>
+        <TouchableOpacity onPress={navToAdd} style={styles.addBtn}></TouchableOpacity>
       </View>
 
       <FlatList
@@ -145,6 +170,21 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     borderRadius: 25,
+  },
+  rightActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  actionButton: {
+    width: 60,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "red",
+  },
+  actionText: {
+    color: "white",
+    fontSize: 16,
   },
 });
 
