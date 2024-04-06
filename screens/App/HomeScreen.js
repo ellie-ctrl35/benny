@@ -29,7 +29,8 @@ const HomeScreen = () => {
       </View>
 
       <View style={styles.featureContainer}>
-        <View style={styles.featureBox}>
+        
+        <TouchableOpacity style={styles.featureBox}>
           <MaterialCommunityIcons
             name="robot-angry"
             size={24}
@@ -38,13 +39,13 @@ const HomeScreen = () => {
           <Text style={styles.featureText}>
             Ask our AI Assistant about anuthing Health related
           </Text>
-        </View>
-        <View style={styles.featureBox}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.featureBox}>
           <MaterialCommunityIcons name="alarm" size={24} color="#4b9eb2" />
           <Text style={styles.featureText}>
             Set Reminders for your Medicine{" "}
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
       <Text style={styles.historyTitle}>History</Text>
       <ScrollView style={styles.historyContainer}>
