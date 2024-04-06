@@ -104,7 +104,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   sendButton: {
-    backgroundColor: "#2563EB", // A blue color for the send button
     borderRadius: 25,
     padding: 12,
   },
