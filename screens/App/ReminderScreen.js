@@ -12,6 +12,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Swipeable } from "react-native-gesture-handler";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 
@@ -46,7 +47,7 @@ const ReminderScreen = () => {
     });
 
     return (
-      <Swipeable renderRightActions={renderRightActions}>
+      <Swipeable renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item)}>
         <TouchableOpacity
           style={styles.item}
           onPress={() => console.log("Pressed")}
@@ -66,29 +67,39 @@ const ReminderScreen = () => {
     );
   };
 
-  const renderRightActions = (progress, dragX) => {
+  const renderRightActions = (progress, dragX, item) => {
     const trans = dragX.interpolate({
       inputRange: [-width, 0],
       outputRange: [-60, 0],
       extrapolate: "clamp",
     });
-
+  
+    const handleDelete = async () => {
+      try {
+        const updatedReminders = reminders.filter((reminder) => reminder.id !== item.id);
+        await AsyncStorage.setItem("reminders", JSON.stringify(updatedReminders));
+        setReminders(updatedReminders);
+      } catch (error) {
+        console.error("Error deleting reminder:", error);
+      }
+    };
+  
     return (
       <View style={styles.rightActions}>
         <Animated.View style={[styles.actionButton, { transform: [{ translateX: trans }] }]}>
-          <TouchableOpacity onPress={() => console.log("Delete")}>
-            <Text style={styles.actionText}>Delete</Text>
+          <TouchableOpacity onPress={handleDelete}>
+            <MaterialCommunityIcons name="delete" size={30} color="white" />
           </TouchableOpacity>
         </Animated.View>
         <Animated.View style={[styles.actionButton, { transform: [{ translateX: trans }] }]}>
           <TouchableOpacity onPress={() => console.log("Edit")}>
-            <Text style={styles.actionText}>Edit</Text>
+            <MaterialCommunityIcons name="pencil" size={30} color="white" />
           </TouchableOpacity>
         </Animated.View>
       </View>
     );
   };
-
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topContainer}>
@@ -180,11 +191,7 @@ const styles = StyleSheet.create({
     width: 60,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "red",
-  },
-  actionText: {
-    color: "white",
-    fontSize: 16,
+    height: "85%",
   },
 });
 
