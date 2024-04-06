@@ -74,10 +74,24 @@ const AddReminder = () => {
   const [description, setDescription] = useState('');
 
   useEffect(() => {
+    const fetchReminders = async () => {
+      try {
+        const storedReminders = await AsyncStorage.getItem("reminders");
+        if (storedReminders) {
+          console.info("Reminders from AsyncStorage:", JSON.parse(storedReminders));
+        }
+      } catch (error) {
+        console.error("Error retrieving reminders:", error);
+      }
+    };
+
+    fetchReminders();
+
     const interval = setInterval(() => {
       checkReminders();
     }, 1000); // Check every second
     return () => clearInterval(interval); // Clean up interval on component unmount
+    
   }, []);
 
   const checkReminders = async () => {
@@ -235,7 +249,7 @@ const AddReminder = () => {
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.addButton} onPress={handleSaveReminder}>
-        <Text style={styles.addButtonText}>Add Hashtags</Text>
+        <Text style={styles.addButtonText}>Add Reminder</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -294,8 +308,9 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     textAlign: "center",
-    color: "#fff",
+    color: "#000",
     fontWeight: "bold",
+    fontSize: 20,
   },
 });
 

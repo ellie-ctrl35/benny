@@ -9,8 +9,10 @@ import {
   SafeAreaView,
 } from "react-native";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const HomeScreen = () => {
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.featureContainer}>
@@ -30,7 +32,7 @@ const HomeScreen = () => {
 
       <View style={styles.featureContainer}>
         
-        <TouchableOpacity style={styles.featureBox}>
+        <TouchableOpacity onPress={()=>navigation.navigate('Chat')} style={styles.featureBox}>
           <MaterialCommunityIcons
             name="robot-angry"
             size={24}
@@ -40,7 +42,7 @@ const HomeScreen = () => {
             Ask our AI Assistant about anuthing Health related
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.featureBox}>
+        <TouchableOpacity style={styles.featureBox} onPress={() => navigation.navigate('AddReminder')}>
           <MaterialCommunityIcons name="alarm" size={24} color="#4b9eb2" />
           <Text style={styles.featureText}>
             Set Reminders for your Medicine{" "}

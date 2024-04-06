@@ -1,47 +1,80 @@
-import React from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity,SafeAreaView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  TouchableOpacity,
+  SafeAreaView,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ReminderScreen = () => {
-  const reminders = [
-    { key: '1', title: 'o Home Work', time: '8 am - 9:30 am' },
-    { key: '2', title: 'Mke Cookies', time: '9:45 am - 11:00 am' },
-    { key: '3', title: 'Math Class', time: '1:00 pm - 3:00 pm' },
-    { key: '4', title: 'Do Home Wok', time: '8 am - 9:30 am' },
-    { key: '5', title: 'Make Cokies', time: '9:45 am - 11:00 am' },
-    { key: '6', title: 'Math lass', time: '1:00 pm - 3:00 pm' },
-    // ... more reminders
-  ];
-
+  const [reminders, setReminders] = useState([]);
   const navigation = useNavigation();
 
-  const navToAdd = () =>{
-    navigation.navigate('AddReminder')
-  }
+  useEffect(() => {
+    const fetchReminders = async () => {
+      try {
+        const storedReminders = await AsyncStorage.getItem("reminders");
+        if (storedReminders) {
+          setReminders(JSON.parse(storedReminders));
+        }
+      } catch (error) {
+        console.error("Error retrieving reminders:", error);
+      }
+    };
 
-  const renderItem = ({ item, index }) => (
-    <TouchableOpacity style={[styles.item, { backgroundColor: index % 2 === 0 ? '#D1FAE5' : '#BAE6FD' }]}>
-      <View style={styles.itemLeft}>
-        <View style={styles.square}></View>
-        <Text style={styles.itemText}>{item.title}</Text>
-      </View>
-      <View style={styles.circular}></View>
-    </TouchableOpacity>
-  );
+    fetchReminders();
+  }, []);
+
+  const navToAdd = () => {
+    navigation.navigate("AddReminder");
+  };
+
+  const renderItem = ({ item, index }) => {
+    const reminderTime = new Date(item.time);
+    // Format the time into a readable string
+    const formattedTime = reminderTime.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    return (
+      <TouchableOpacity
+        style={[
+          styles.item,
+          { backgroundColor: index % 2 === 0 ? "#D1FAE5" : "#BAE6FD" },
+        ]}
+      >
+        <View style={styles.itemLeft}>
+          <View style={styles.square}></View>
+          <View>
+            <Text style={styles.itemTitle}>{item.description}</Text>
+            <Text style={styles.itemText}>
+            {formattedTime} - {item.frequency}
+            </Text>
+          </View>
+        </View>
+        <View style={styles.circular}></View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.TopContainer}>
-       <Text style={styles.title}>Reminders</Text>
-       <TouchableOpacity onPress={navToAdd} style={styles.AddBtn}>
-         
-       </TouchableOpacity>
+      <View style={styles.topContainer}>
+        <Text style={styles.title}>Reminders</Text>
+        <TouchableOpacity
+          onPress={navToAdd}
+          style={styles.addBtn}
+        ></TouchableOpacity>
       </View>
-      
+
       <FlatList
         data={reminders}
         renderItem={renderItem}
-        keyExtractor={(item) => item.key}
+        keyExtractor={(item) => item.id}
       />
     </SafeAreaView>
   );
@@ -50,66 +83,69 @@ const ReminderScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#191919',
+    backgroundColor: "#191919",
   },
-  TopContainer:{
-   width:"90%",
-   height:"10%",
-   marginTop:"2%",
-   alignSelf:"center",
-   alignItems:"center",
-   justifyContent:"space-between",
-   display:"flex",
-   flexDirection:"row",
+  topContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    marginTop: 10,
+    marginBottom: 10,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    marginLeft: 20,
-    marginBottom: 10,
-    color:"#fff"
+    fontWeight: "bold",
+    color: "#fff",
   },
   item: {
-    backgroundColor: '#D1FAE5',
+    backgroundColor: "#D1FAE5",
     padding: 15,
     borderRadius: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginHorizontal: 20,
-    marginTop:"1%",
-    height:100,
-    marginBottom:"2%"
+    marginTop: 5,
+    height: 100,
+    marginBottom: 10,
   },
   itemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    maxWidth: "80%",
   },
   square: {
     width: 24,
     height: 24,
-    backgroundColor: '#55BCF6',
+    backgroundColor: "#55BCF6",
     opacity: 0.4,
     borderRadius: 5,
     marginRight: 15,
   },
+  itemTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#000",
+  },
   itemText: {
-    maxWidth: '80%',
+    fontSize: 14,
+    color: "#000",
   },
   circular: {
     width: 12,
     height: 12,
-    borderColor: '#55BCF6',
+    borderColor: "#55BCF6",
     borderWidth: 2,
     borderRadius: 5,
   },
-  AddBtn:{
-    backgroundColor:"dodgerblue",
-    height:"85%",
-    width:"15%",
-    borderRadius:"50%"
-  }
+  addBtn: {
+    backgroundColor: "dodgerblue",
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+  },
 });
 
 export default ReminderScreen;
