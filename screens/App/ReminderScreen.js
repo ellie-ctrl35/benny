@@ -9,7 +9,7 @@ import {
   Animated,
   Dimensions,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation,useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Swipeable } from "react-native-gesture-handler";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -20,21 +20,21 @@ const ReminderScreen = () => {
   const [reminders, setReminders] = useState([]);
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const fetchReminders = async () => {
-      try {
-        const storedReminders = await AsyncStorage.getItem("reminders");
-        if (storedReminders) {
-          setReminders(JSON.parse(storedReminders));
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchReminders = async () => {
+        try {
+          const storedReminders = await AsyncStorage.getItem("reminders");
+          if (storedReminders) {
+            setReminders(JSON.parse(storedReminders));
+          }
+        } catch (error) {
+          console.error("Error retrieving reminders:", error);
         }
-      } catch (error) {
-        console.error("Error retrieving reminders:", error);
-      }
-    };
-
-    fetchReminders();
-  }, []);
-
+      };
+      fetchReminders();
+    }, [])
+  );
   const navToAdd = () => {
     navigation.navigate("AddReminder");
   };
